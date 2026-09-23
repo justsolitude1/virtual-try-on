@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Storefront Try-On Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700&family=Bodoni+Moda:opsz,wght@6..96,500&display=swap">
+<style>
+  body { margin: 0; }
+  img { max-width: 100%; }
+  /* A storefront theme commits to one light look, like a Shopify theme's colour scheme */
+  :root {
+    color-scheme: light;
+    --bg: #ffffff; --ink: #121212; --muted: #6b6b6b; --line: #e3e3e3; --soft: #f3f3f3;
+    --media: #efefee; --sale: #1f6f43; --focus: #3551c9;
+    --sans: "Assistant", "Segoe UI", system-ui, sans-serif;
+    --logo: "Bodoni Moda", Didot, Georgia, serif;
+  }
+  [hidden] { display: none !important; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--sans); }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-inline: 16px; }
+
+  .mockbar { background: #fff4d6; color: #5a4300; font-size: 13px; text-align: center; padding: 6px 16px; }
+  .announce { background: var(--ink); color: #fff; font-size: 13px; letter-spacing: .06em; text-align: center; padding: 9px 16px; }
+  .top { border-bottom: 1px solid var(--line); }
+  .top .wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; min-height: 72px; gap: 12px; }
+  .nav { display: flex; gap: 22px; font-size: 15px; }
+  .nav a { text-decoration: none; color: var(--muted); }
+  .nav a[aria-current] { color: var(--ink); text-decoration: underline; text-underline-offset: 6px; }
+  .logo { font: 500 26px/1 var(--logo); letter-spacing: .14em; text-align: center; }
+  .icons { display: flex; justify-content: flex-end; gap: 18px; }
+  .icons svg { width: 22px; height: 22px; }
+  .cart { position: relative; }
+  .cart b { position: absolute; top: -6px; right: -9px; background: var(--ink); color: #fff; font-size: 11px;
+    min-width: 18px; height: 18px; border-radius: 9px; display: grid; place-items: center; }
+
+  .crumbs { font-size: 13px; color: var(--muted); padding-block: 18px 6px; }
+
+  .product { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 48px; padding-block: 8px 56px; }
+  .gallery { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; align-self: start; position: sticky; top: 16px; }
+  .thumbs { display: flex; flex-direction: column; gap: 10px; }
+  .thumb { width: 76px; height: 92px; border: 1px solid var(--line); background: var(--media); padding: 0; cursor: pointer;
+    display: grid; place-items: center; overflow: hidden; }
+  .thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .thumb[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+  .thumb.t3d { font-size: 11px; font-weight: 700; letter-spacing: .06em; line-height: 1.2; text-align: center; }
+  .thumb.t3d svg { width: 26px; height: 26px; display: block; margin: 0 auto 4px; }
+  .media { position: relative; background: var(--media); aspect-ratio: 4 / 5; max-width: 100%; overflow: hidden; }
+  .media img.photo { width: 100%; height: 100%; object-fit: contain; padding: 6%; box-sizing: border-box; }
+  .viewer { position: absolute; inset: 0; background: radial-gradient(110% 80% at 50% 35%, #fbfbfb, #e2e3e5); }
+  .viewer canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  .badge { position: absolute; top: 14px; left: 14px; background: #fff; border: 1px solid var(--line); border-radius: 999px;
+    font-size: 12.5px; font-weight: 600; padding: 4px 11px; display: flex; gap: 7px; align-items: center; }
+  .badge i { width: 7px; height: 7px; border-radius: 50%; background: #2a9d5c; }
+  .loading { position: absolute; top: 14px; right: 14px; background: #fff; border: 1px solid var(--line); border-radius: 999px;
+    font-size: 12.5px; color: var(--muted); padding: 4px 11px; }
+  .loading.err { color: #a3321f; }
+  .vbar { position: absolute; left: 14px; right: 14px; bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .vbar .hint { font-size: 12.5px; color: var(--muted); background: rgba(255,255,255,.8); border-radius: 999px; padding: 3px 10px; }
+  .pills { display: flex; gap: 6px; }
+  .pill { background: #fff; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; font-weight: 600; padding: 5px 12px; cursor: pointer; }
+  .pill[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .info { display: flex; flex-direction: column; gap: 22px; max-width: 460px; }
+  .vendor { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  .info h1 { font-size: 38px; line-height: 1.12; font-weight: 500; margin: 4px 0 8px; text-wrap: balance; }
+  .price { font-size: 19px; letter-spacing: .03em; }
+  .tax { font-size: 13px; color: var(--muted); }
+  .opt legend { font-size: 13px; color: var(--muted); padding: 0; margin-bottom: 8px; }
+  .opt legend b { color: var(--ink); font-weight: 600; }
+  fieldset { border: 0; margin: 0; padding: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--ink); border-radius: 40px; background: #fff; padding: 7px 20px; cursor: pointer; font-size: 15px; }
+  .chip[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .chip:disabled { border-color: var(--line); color: #b3b3b3; text-decoration: line-through; cursor: not-allowed; }
+  .swatch { display: inline-flex; align-items: center; gap: 8px; }
+  .swatch i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0,0,0,.18); }
+  .fitnote { font-size: 13px; color: var(--muted); margin: 8px 0 0; display: flex; gap: 6px; align-items: center; }
+  .fitnote svg { width: 15px; height: 15px; flex: none; }
+  .buy { display: flex; flex-direction: column; gap: 10px; }
+  .row { display: flex; gap: 10px; }
+  .qty { display: flex; border: 1px solid var(--ink); align-items: center; }
+  .qty button { background: none; border: 0; width: 42px; height: 46px; cursor: pointer; font-size: 18px; }
+  .qty span { min-width: 26px; text-align: center; font-variant-numeric: tabular-nums; }
+  .btn { flex: 1; height: 48px; border: 1px solid var(--ink); background: #fff; font-size: 15px; letter-spacing: .06em; cursor: pointer; }
+  .btn.primary { background: var(--ink); color: #fff; }
+  .look { border: 1px solid var(--line); display: grid; grid-template-columns: 72px 1fr; gap: 14px; padding: 12px; align-items: center; }
+  .look img { width: 72px; height: 88px; object-fit: contain; background: var(--media); }
+  .look h3 { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 2px; font-weight: 600; }
+  .look p { margin: 0; font-weight: 600; }
+  .look .sub { font-weight: 400; color: var(--muted); font-size: 14px; }
+  .look .acts { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .look .acts button { font-size: 13px; border: 1px solid var(--ink); background: #fff; padding: 5px 12px; cursor: pointer; }
+  .look .acts button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  details { border-top: 1px solid var(--line); padding-block: 14px; }
+  details:last-of-type { border-bottom: 1px solid var(--line); }
+  summary { cursor: pointer; font-size: 15px; list-style: none; display: flex; justify-content: space-between; }
+  summary::after { content: "+"; font-size: 18px; line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details p { margin: 10px 0 0; color: var(--muted); font-size: 15px; }
+
+  .more { padding-block: 8px 64px; }
+  .more h2 { font-size: 24px; font-weight: 500; margin: 0 0 18px; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .card { text-align: left; background: none; border: 0; padding: 0; cursor: pointer; }
+  .card .im { background: var(--media); aspect-ratio: 4 / 5; display: grid; place-items: center; position: relative; }
+  .card img { width: 82%; height: 82%; object-fit: contain; }
+  .card .tag { position: absolute; left: 10px; bottom: 10px; background: #fff; font-size: 11.5px; font-weight: 700; letter-spacing: .06em;
+    border-radius: 999px; padding: 3px 10px; }
+  .card p { margin: 10px 0 0; }
+  .card .pr { color: var(--muted); margin: 0; }
+  .card:hover p:first-of-type { text-decoration: underline; text-underline-offset: 4px; }
+
+  .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+    background: var(--ink); color: #fff; padding: 10px 18px; font-size: 14px; border-radius: 6px; }
+
+  @media (max-width: 900px) {
+    .product { grid-template-columns: 1fr; gap: 28px; }
+    .gallery { position: static; grid-template-columns: 1fr; }
+    .thumbs { flex-direction: row; order: 2; overflow-x: auto; }
+    .thumb { flex: none; width: 64px; height: 78px; }
+    .info { max-width: none; }
+    .nav { display: none; }
+    .top .wrap { grid-template-columns: auto 1fr auto; }
+    .logo { text-align: left; font-size: 21px; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .info h1 { font-size: 30px; }
+  }
+</style>
+
+<div class="mockbar">Mockup of a Shopify product page. Store name, prices and copy are placeholders.</div>
+<div class="announce">NEW · TRY EVERY PIECE ON IN 3D, IN YOUR SIZE</div>
+<header class="top">
+  <div class="wrap">
+    <nav class="nav" aria-label="Main">
+      <a href="#" aria-current="page">New in</a><a href="#">Jackets</a><a href="#">Trousers</a><a href="#">About</a>
+    </nav>
+    <div class="logo">YOUR BRAND</div>
+    <div class="icons" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+      <span class="cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><b id="cartCount">0</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="crumbs" id="crumbs"></div>
+  <section class="product">
+    <div class="gallery">
+      <div class="thumbs" id="thumbs"></div>
+      <div class="media" id="media">
+        <img class="photo" id="photo" alt="">
+        <div class="viewer" id="viewer">
+          <span class="badge"><i></i>3D try-on · size <span id="badgeSize">S</span></span>
+          <span class="loading" id="loading" hidden></span>
+          <div class="vbar">
+            <span class="hint">Drag to turn · pinch to zoom</span>
+            <div class="pills">
+              <button class="pill" id="spin" aria-pressed="true">Turntable</button>
+              <button class="pill" id="front">Front</button>
+              <button class="pill" id="back">Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info">
+      <div>
+        <p class="vendor">Your Brand</p>
+        <h1 id="title"></h1>
+        <div class="price" id="price"></div>
+        <div class="tax">Tax included. Shipping calculated at checkout.</div>
+      </div>
+      <fieldset class="opt" id="colourSet"><legend>Colour: <b id="colourName"></b></legend><div class="chips" id="colours"></div></fieldset>
+      <fieldset class="opt">
+        <legend>Size: <b id="sizeName"></b></legend>
+        <div class="chips" id="sizes"></div>
+        <p class="fitnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 3 8v8l9 5 9-5V8l-9-5Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>The 3D mannequin changes with the size you pick.</p>
+      </fieldset>
+      <div class="buy">
+        <div class="row">
+          <div class="qty"><button id="qMinus" aria-label="Decrease quantity">−</button><span id="qty">1</span><button id="qPlus" aria-label="Increase quantity">+</button></div>
+          <button class="btn" id="add">ADD TO CART</button>
+        </div>
+        <button class="btn primary" id="buyNow">BUY IT NOW</button>
+      </div>
+      <div class="look" id="look"></div>
+      <div>
+        <details open><summary>Description</summary><p id="desc"></p></details>
+        <details><summary>Materials &amp; care</summary><p id="care"></p></details>
+        <details><summary>Size &amp; fit</summary><p>Mannequin S: bust 86, waist 68, hip 94 cm. Mannequin L: bust 99, waist 78, hip 108 cm. Both 170 cm tall. Fit is shown in the 3D try-on above.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="more">
+    <h2>You may also like</h2>
+    <div class="grid" id="more"></div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+// ---------------- catalogue (placeholder prices/copy) ----------------
+const GARMENTS = {
+  blue:     { slot: "top", file: "../models/blue_moto_jacket.glb", scale: [1.08, 1.08, 1.08], offset: [0, 0, 0.82], hides: ["torso_upper", "arms"] },
+  burgundy: { slot: "top", file: "../models/burgundy_peplum_jacket.glb", scale: [1.10, 1.10, 1.08], offset: [0, 0, 0.82], hides: ["torso_upper", "arms"] },
+  sand:     { slot: "top", file: "../models/beige_peplum_jacket.glb", scale: [1.10, 1.10, 1.08], offset: [0, 0, 0.82], hides: ["torso_upper", "arms"] },
+  olive:    { slot: "bottom", file: "../models/green_balloon_pants.glb", scale: [1.06, 1.06, 1.0], offset: [0, 0, 0.03], hides: ["hips", "legs"],
+              tuck: { z0: 0.72, z1: 0.93, scale: 0.72 } },
+};
+const PRODUCTS = {
+  peplum: { title: "Peplum Leather Jacket", price: 260, crumb: "Jackets", pair: "trousers",
+    desc: "A sculpted cropped jacket with a dramatic pointed collar, corset seaming and a two-point peplum hem. Full-length front zip.",
+    care: "Faux leather with a satin lining. Wipe clean with a damp cloth. Do not tumble dry.",
+    variants: [{ key: "burgundy", name: "Burgundy", hex: "#7a2a33", img: "img/peplum-jacket-burgundy.webp" },
+               { key: "sand", name: "Sand", hex: "#d8c3a2", img: "img/peplum-jacket-sand.webp" }] },
+  moto: { title: "Cropped Moto Jacket", price: 240, crumb: "Jackets", pair: "trousers",
+    desc: "A fitted, cropped biker jacket in textured twill with an asymmetric zip, oversized lapels and black leather piping.",
+    care: "Wool-blend twill, polyester lining. Dry clean only.",
+    variants: [{ key: "blue", name: "Royal Blue", hex: "#2447b8", img: "img/moto-jacket-royal-blue.webp" }] },
+  trousers: { title: "Balloon Trousers", price: 150, crumb: "Trousers", pair: "peplum",
+    desc: "Voluminous high-waisted trousers in crisp taffeta, gathered into an elasticated waist and cuffed ankles.",
+    care: "Polyester taffeta. Cool hand wash, hang to dry.",
+    variants: [{ key: "olive", name: "Olive", hex: "#6f8a3a", img: "img/balloon-trousers-olive.webp" }] },
+};
+const SIZES = { XS: null, S: "S", M: null, L: "L", XL: null };           // sizes with a 3D mannequin
+const AVATARS = { S: { file: "../models/avatar_S.glb", g: [1, 1, 1] }, L: { file: "../models/avatar_L.glb", g: [1.15, 1.15, 1] } };
+const PARTS = ["head", "torso_upper", "hips", "arms", "hands", "legs", "feet"];
+const money = (n) => `$${n.toFixed(2)}`;
+
+const state = { product: "peplum", variant: 0, size: "S", pairOn: true, pairVariant: 0, view: "3d", qty: 1, cart: 0,
+  spin: !matchMedia("(prefers-reduced-motion: reduce)").matches };
+
+// ---------------- 3D viewer ----------------
+const viewerEl = document.getElementById("viewer");
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+viewerEl.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.8;
+const key = new THREE.DirectionalLight(0xffffff, 1.3);
+key.position.set(1.6, 3.2, 2.4);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+Object.assign(key.shadow.camera, { left: -1, right: 1, top: 2, bottom: -0.2, near: 0.5, far: 8 });
+key.shadow.bias = -0.0005;
+scene.add(key);
+const floor = new THREE.Mesh(new THREE.CircleGeometry(1.2, 48), new THREE.ShadowMaterial({ opacity: 0.14 }));
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
+const figure = new THREE.Group();
+scene.add(figure);
+const camera = new THREE.PerspectiveCamera(26, 0.8, 0.05, 50);
+const controls = new OrbitControls(camera, renderer.domElement);
+Object.assign(controls, { enableDamping: true, enablePan: false, minDistance: 1.4, maxDistance: 6, minPolarAngle: 0.35, maxPolarAngle: 1.75, autoRotateSpeed: 1.5 });
+function frame(az) {
+  camera.position.set(Math.sin(az) * 4.6, 1.05, Math.cos(az) * 4.6);
+  controls.target.set(0, 0.88, 0);
+  controls.update();
+}
+frame(0.35);
+new ResizeObserver(() => {
+  const w = viewerEl.clientWidth, h = viewerEl.clientHeight;
+  if (!w || !h) return;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}).observe(viewerEl);
+renderer.setAnimationLoop(() => {
+  if (state.view !== "3d") return;
+  controls.autoRotate = state.spin;
+  controls.update();
+  renderer.render(scene, camera);
+});
+controls.addEventListener("start", () => setSpin(false));
+
+const loader = new GLTFLoader();
+const cache = new Map();
+function load(file) {
+  if (!cache.has(file)) {
+    const p = loader.loadAsync(file).then((gltf) => {
+      gltf.scene.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+      return gltf.scene;
+    });
+    p.catch(() => cache.delete(file));
+    cache.set(file, p);
+  }
+  return cache.get(file);
+}
+const tuckData = new WeakMap();
+function setTuck(root, t, on) {
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    const pos = o.geometry.attributes.position;
+    if (!tuckData.has(o)) {
+      const orig = pos.array.slice(), tucked = orig.slice();
+      for (let i = 0; i < tucked.length; i += 3) {
+        let u = Math.min(1, Math.max(0, (orig[i + 1] - t.z0) / (t.z1 - t.z0)));
+        u = u * u * (3 - 2 * u);
+        const k = 1 + (t.scale - 1) * u;
+        tucked[i] = orig[i] * k; tucked[i + 2] = orig[i + 2] * k;
+      }
+      tuckData.set(o, { orig, tucked, on: false });
+    }
+    const d = tuckData.get(o);
+    if (d.on !== on) { pos.array.set(on ? d.tucked : d.orig); pos.needsUpdate = true; o.geometry.computeBoundingSphere(); d.on = on; }
+  });
+}
+
+const loadingEl = document.getElementById("loading");
+let ticket = 0;
+async function dress() {
+  const t = ++ticket;
+  const p = PRODUCTS[state.product];
+  const own = p.variants[state.variant].key;
+  const worn = [own];
+  if (state.pairOn) worn.push(PRODUCTS[p.pair].variants[state.pairVariant].key);
+  const avatar = AVATARS[state.size];
+  const need = [avatar.file, ...worn.map((k) => GARMENTS[k].file)];
+  if (need.some((f) => !cache.has(f))) { loadingEl.hidden = false; loadingEl.classList.remove("err"); loadingEl.textContent = "Loading 3D…"; }
+  let objs;
+  try { objs = await Promise.all(need.map(load)); }
+  catch { if (t === ticket) { loadingEl.textContent = "3D didn't load. Pick the option again."; loadingEl.classList.add("err"); } return; }
+  if (t !== ticket) return;
+  const [av, ...gs] = objs;
+  figure.clear();
+  const hidden = new Set(worn.flatMap((k) => GARMENTS[k].hides));
+  for (const part of PARTS) { const o = av.getObjectByName(part); if (o) o.visible = !hidden.has(part); }
+  figure.add(av);
+  const hasTop = worn.some((k) => GARMENTS[k].slot === "top");
+  worn.forEach((k, i) => {
+    const g = GARMENTS[k], root = gs[i];
+    const s = g.scale.map((v, j) => v * avatar.g[j]);
+    root.scale.set(s[0], s[2], s[1]);                      // Blender z-up -> three y-up
+    root.position.set(g.offset[0], g.offset[2], -g.offset[1]);
+    if (g.tuck) setTuck(root, g.tuck, hasTop);
+    figure.add(root);
+  });
+  loadingEl.hidden = true;
+}
+
+// ---------------- page UI ----------------
+const $ = (id) => document.getElementById(id);
+function el(tag, attrs = {}, html = "") {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v);
+  }
+  e.innerHTML = html;
+  return e;
+}
+const cube = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3 3 8v8l9 5 9-5V8l-9-5Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>`;
+
+function renderPage() {
+  const p = PRODUCTS[state.product], v = p.variants[state.variant];
+  const pair = PRODUCTS[p.pair], pv = pair.variants[state.pairVariant];
+  $("crumbs").textContent = `Home / ${p.crumb} / ${p.title}`;
+  $("title").textContent = p.title;
+  $("price").textContent = money(p.price);
+  $("desc").textContent = p.desc;
+  $("care").textContent = p.care;
+  $("colourName").textContent = v.name;
+  $("colourSet").hidden = false;
+  $("colours").replaceChildren(...p.variants.map((x, i) => el("button", {
+    class: "chip swatch", type: "button", "aria-pressed": String(i === state.variant),
+    onclick: () => { state.variant = i; update(); } }, `<i style="background:${x.hex}"></i>${x.name}`)));
+  $("sizeName").textContent = state.size;
+  $("sizes").replaceChildren(...Object.entries(SIZES).map(([s, av]) => el("button", {
+    class: "chip", type: "button", "aria-pressed": String(s === state.size), ...(av ? {} : { disabled: "", title: "Sold out in this mockup" }),
+    onclick: () => { state.size = s; update(); } }, s)));
+  $("badgeSize").textContent = state.size;
+
+  $("thumbs").replaceChildren(
+    el("button", { class: "thumb t3d", type: "button", "aria-pressed": String(state.view === "3d"), "aria-label": "3D try-on",
+      onclick: () => { state.view = "3d"; update(); } }, `${cube}TRY ON`),
+    ...p.variants.map((x, i) => el("button", { class: "thumb", type: "button", "aria-pressed": String(state.view === "photo" && i === state.variant),
+      onclick: () => { state.view = "photo"; state.variant = i; update(); } }, `<img src="${x.img}" alt="${p.title} in ${x.name}">`)));
+  $("viewer").hidden = state.view !== "3d";
+  $("photo").hidden = state.view === "3d";
+  $("photo").src = v.img;
+  $("photo").alt = `${p.title} in ${v.name}`;
+
+  
+  $("look").replaceChildren(
+    el("img", { src: pv.img, alt: pair.title }),
+    el("div", {}, `<h3>Complete the look</h3><p>${pair.title} <span class="sub">· ${pv.name} · ${money(pair.price)}</span></p>`));
+  const acts = el("div", { class: "acts" });
+  acts.append(
+    el("button", { type: "button", "aria-pressed": String(state.pairOn), onclick: () => { state.pairOn = !state.pairOn; state.view = "3d"; update(); } },
+      state.pairOn ? "Wearing it in 3D ✓" : "Try it on together"),
+    ...(pair.variants.length > 1 ? pair.variants.map((x, i) => el("button", { type: "button", "aria-pressed": String(i === state.pairVariant),
+      onclick: () => { state.pairVariant = i; state.pairOn = true; state.view = "3d"; update(); } }, x.name)) : []),
+    el("button", { type: "button", onclick: () => addToCart(1, pair.title) }, "Add"));
+  $("look").lastChild.append(acts);
+
+  $("more").replaceChildren(...Object.entries(PRODUCTS).filter(([k]) => k !== state.product).concat(
+    state.product === "peplum" ? [] : []).map(([k, x]) => el("button", { class: "card", type: "button",
+      onclick: () => { Object.assign(state, { product: k, variant: 0, pairVariant: 0, view: "3d" }); update(); scrollTo({ top: 0, behavior: "smooth" }); } },
+      `<div class="im"><img src="${x.variants[0].img}" alt=""><span class="tag">${cube.replace('stroke-width="1.5"', 'stroke-width="1.5" width="12" height="12" style="vertical-align:-2px"')} TRY ON</span></div><p>${x.title}</p><p class="pr">${money(x.price)}</p>`)));
+  $("qty").textContent = state.qty;
+  $("cartCount").textContent = state.cart;
+}
+function update() { renderPage(); if (state.view === "3d") dress(); }
+
+let toastTimer;
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.hidden = true), 2600);
+}
+function addToCart(n, name) { state.cart += n; renderPage(); toast(`Added ${name} to cart (mockup: not a real checkout)`); }
+$("qMinus").addEventListener("click", () => { state.qty = Math.max(1, state.qty - 1); renderPage(); });
+$("qPlus").addEventListener("click", () => { state.qty += 1; renderPage(); });
+$("add").addEventListener("click", () => addToCart(state.qty, `${PRODUCTS[state.product].title} (${PRODUCTS[state.product].variants[state.variant].name}, ${state.size})`));
+$("buyNow").addEventListener("click", () => toast("Checkout isn't connected in this mockup"));
+function setSpin(on) { state.spin = on; $("spin").setAttribute("aria-pressed", String(on)); }
+$("spin").addEventListener("click", () => setSpin(!state.spin));
+$("front").addEventListener("click", () => { setSpin(false); frame(0); });
+$("back").addEventListener("click", () => { setSpin(false); frame(Math.PI); });
+setSpin(state.spin);
+update();
+// warm the cache for the rest of the catalogue
+(async () => { for (const f of [...Object.values(GARMENTS).map((g) => g.file), AVATARS.L.file]) { try { await load(f); } catch {} } })();
+</script>

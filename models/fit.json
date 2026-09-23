@@ -1,0 +1,101 @@
+{
+  "units": "metres, Blender Z-up (glTF/three.js: x, z, -y)",
+  "avatars": {
+    "S": {
+      "file": "avatar_S.glb",
+      "garment_scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "L": {
+      "file": "avatar_L.glb",
+      "garment_scale": [
+        1.15,
+        1.15,
+        1.0
+      ]
+    }
+  },
+  "garments": {
+    "blue_moto_jacket": {
+      "file": "blue_moto_jacket.glb",
+      "slot": "top",
+      "scale": [
+        1.08,
+        1.08,
+        1.08
+      ],
+      "offset": [
+        0,
+        0,
+        0.82
+      ],
+      "hides": [
+        "torso_upper",
+        "arms"
+      ]
+    },
+    "burgundy_peplum_jacket": {
+      "file": "burgundy_peplum_jacket.glb",
+      "slot": "top",
+      "scale": [
+        1.1,
+        1.1,
+        1.08
+      ],
+      "offset": [
+        0,
+        0,
+        0.82
+      ],
+      "hides": [
+        "torso_upper",
+        "arms"
+      ]
+    },
+    "beige_peplum_jacket": {
+      "file": "beige_peplum_jacket.glb",
+      "slot": "top",
+      "scale": [
+        1.1,
+        1.1,
+        1.08
+      ],
+      "offset": [
+        0,
+        0,
+        0.82
+      ],
+      "hides": [
+        "torso_upper",
+        "arms"
+      ]
+    },
+    "green_balloon_pants": {
+      "file": "green_balloon_pants.glb",
+      "slot": "bottom",
+      "scale": [
+        1.06,
+        1.06,
+        1.0
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "hides": [
+        "hips",
+        "legs"
+      ],
+      "tuck_under_top": {
+        "z0": 0.72,
+        "z1": 0.93,
+        "scale": 0.72,
+        "note": "local garment coords (Blender z): radial scale eases 1 -> scale between z0 and z1, stays at scale above"
+      }
+    }
+  }
+}
